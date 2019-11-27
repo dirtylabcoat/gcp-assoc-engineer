@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: basic-webpage
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: basic-webpage
+      labels:
+        app: basic-webpage
+        env: test
+    spec:
+      containers:
+        - image: eu.gcr.io/astute-buttress-256817/basic-webpage-app:latest
+          imagePullPolicy: Always
+          name: basic-webpage
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: basic-webpage-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: basic-webpage
