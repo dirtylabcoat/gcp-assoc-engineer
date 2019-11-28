@@ -1,13 +1,19 @@
 package main
 
 import (
+    "encoding/json"
 	"fmt"
+    "io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
 
 type server struct{}
+
+type Response struct {
+    Weekday string `json:"weekday"`
+}
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	dateTime := dateTimeAsString()
@@ -27,7 +33,15 @@ func dateTimeAsString() string {
 }
 
 func getWeekday() string {
-    return ""
+    response, err := http.Get("http://weekday.default:8080/weekday")
+    if err != nil {
+        return "FAIL"
+    } else {
+        var res Response
+        data, _ := ioutil.ReadAll(response.Body)
+        json.Unmarshal(data, &res)
+        return res.Weekday
+    }
 }
 
 func main() {
