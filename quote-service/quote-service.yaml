@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: quote
+spec:
+  replicas: 2
+  template:
+    metadata:
+      name: quote
+      labels:
+        app: quote
+        env: test
+    spec:
+      containers:
+        - image: eu.gcr.io/astute-buttress-256817/quote-service:latest
+          imagePullPolicy: Always
+          name: quote
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quote
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: quote
